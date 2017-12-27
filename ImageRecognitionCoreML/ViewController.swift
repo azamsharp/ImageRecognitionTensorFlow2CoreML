@@ -37,18 +37,21 @@ class ViewController: UIViewController {
         }
 
         self.pictureImageView.image = img
-        
-        let resizedImage = img?.resizeTo(size: CGSize(width: 224, height: 224))
-        
-        let buffer = resizedImage?.toBuffer()
-        
-        let prediction = try! self.model.prediction(input: my_modelInput(input__0: buffer!))
-        
-        //let prediction = try! self.model.prediction(image: buffer!)
-        
-        self.titleLabel.text = prediction.classLabel
-        
-        index = index + 1
+
+        let resizedImage = img.resizeTo(size: CGSize(width: 224, height: 224))
+
+        guard let buffer = resizedImage.toBuffer() else {
+            self.titleLabel.text = "Failed to make buffer from image \(filename)"
+            return
+        }
+
+        do {
+            let prediction = try self.model.prediction(input: my_modelInput(input__0: buffer))
+            self.titleLabel.text = prediction.classLabel
+        } catch let error {
+            self.titleLabel.text = error.localizedDescription
+        }
+
     }
 
 }
