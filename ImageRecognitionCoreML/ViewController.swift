@@ -28,10 +28,8 @@ class ViewController: UIViewController {
     }
 
     func nextImage() {
-        if index > self.images.count - 1 {
-            index = 0
-        }
-        
+        defer { index = index < images.count - 1 ? index + 1 : 0 }
+
         let img = UIImage(named: images[index])
         self.pictureImageView.image = img
         
