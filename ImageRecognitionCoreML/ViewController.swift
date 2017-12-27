@@ -30,7 +30,12 @@ class ViewController: UIViewController {
     func nextImage() {
         defer { index = index < images.count - 1 ? index + 1 : 0 }
 
-        let img = UIImage(named: images[index])
+        let filename = images[index]
+        guard let img = UIImage(named: filename) else {
+            self.titleLabel.text = "Failed to load image \(filename)"
+            return
+        }
+
         self.pictureImageView.image = img
         
         let resizedImage = img?.resizeTo(size: CGSize(width: 224, height: 224))
