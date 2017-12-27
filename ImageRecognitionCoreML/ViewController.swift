@@ -20,29 +20,38 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        nextImage()
     }
     
     @IBAction func nextButtonPressed() {
-        
-        if index > self.images.count - 1 {
-            index = 0
+        nextImage()
+    }
+
+    func nextImage() {
+        defer { index = index < images.count - 1 ? index + 1 : 0 }
+
+        let filename = images[index]
+        guard let img = UIImage(named: filename) else {
+            self.titleLabel.text = "Failed to load image \(filename)"
+            return
         }
-        
-        let img = UIImage(named: images[index])
+
         self.pictureImageView.image = img
-        
-        let resizedImage = img?.resizeTo(size: CGSize(width: 224, height: 224))
-        
-        let buffer = resizedImage?.toBuffer()
-        
-        let prediction = try! self.model.prediction(input: my_modelInput(input__0: buffer!))
-        
-        //let prediction = try! self.model.prediction(image: buffer!)
-        
-        self.titleLabel.text = prediction.classLabel
-        
-        index = index + 1
+
+        let resizedImage = img.resizeTo(size: CGSize(width: 224, height: 224))
+
+        guard let buffer = resizedImage.toBuffer() else {
+            self.titleLabel.text = "Failed to make buffer from image \(filename)"
+            return
+        }
+
+        do {
+            let prediction = try self.model.prediction(input: my_modelInput(input__0: buffer))
+            self.titleLabel.text = prediction.classLabel
+        } catch let error {
+            self.titleLabel.text = error.localizedDescription
+        }
+
     }
 
 }
