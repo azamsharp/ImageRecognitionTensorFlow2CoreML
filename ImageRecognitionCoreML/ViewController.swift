@@ -20,11 +20,14 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        nextImage()
     }
     
     @IBAction func nextButtonPressed() {
-        
+        nextImage()
+    }
+
+    func nextImage() {
         if index > self.images.count - 1 {
             index = 0
         }
